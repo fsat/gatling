@@ -35,7 +35,20 @@ describe Gatling::ImageWrangler do
     position[:height].should eql(200)
   end
 
+  it 'should reset the offset so 0,0 coordinate of the cropped image is at the top left' do
+    image = mock
+    element = mock
+    cropped_image = mock
+    coordinate = {
+        :x => 0,
+        :y => 10,
+        :width => 100,
+        :height => 200,
+    }
 
+    Gatling::ImageWrangler.stub(:get_element_position).and_return(coordinate)
+    image.should_receive(:crop).with(coordinate[:x], coordinate[:y], coordinate[:width], coordinate[:height], true).and_return(cropped_image)
 
-
+    Gatling::ImageWrangler.crop_element(image, element)
+  end
 end

@@ -13,7 +13,8 @@ module Gatling
 
     def self.crop_element image, element_to_crop
       position = get_element_position(element_to_crop)
-      @cropped_element = image.crop(position[:x], position[:y], position[:width], position[:height])
+      # reset the offset data so the 0,0 coordinate is now at the top left of the cropped image
+      @cropped_element = image.crop(position[:x], position[:y], position[:width], position[:height], true)
     end
 
 
