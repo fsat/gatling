@@ -39,9 +39,7 @@ describe Gatling do
 
     it "#save_image_as_diff" do
       @image_class_mock.should_receive(:save).with(:diff).and_return(@ref_path)
-      @image_class_mock.should_receive(:file_name).at_least(:once).and_return("some_name")
-
-      expect {subject.save_image_as_diff(@image_class_mock)}.to raise_error
+      subject.save_image_as_diff(@image_class_mock)
     end
 
     it "#save_image_as_candidate" do

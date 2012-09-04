@@ -44,11 +44,16 @@ describe 'Gatling' do
 
       it 'will return false, creates new diff and candidate images' do
         red_element = element_for_spec('#red')
-        expected_error = "element did not match #{"black.png"}. " +
-                         "A diff image: #{"black.png"} was created in #{@ref_path}/diff/#{"black.png"} " +
-                         "A new reference #{@ref_path}/candidate/#{"black.png"} can be used to fix the test"
 
-        expect {Gatling.matches?("black.png", red_element)}.to raise_error(RuntimeError, expected_error)
+        expect {Gatling.matches?("black.png", red_element)}.to raise_error do |error|
+          error.should be_a? Gatling::MatchError
+          error.comparison.should be_a? Gatling::Comparison
+
+          expected_error = "element did not match #{"black.png"}. " +
+            "A diff image: #{"black.png"} was created in #{@ref_path}/diff/#{"black.png"} " +
+            "A new reference #{@ref_path}/candidate/#{"black.png"} can be used to fix the test"
+          error.message.should == expected_error
+        end
 
         File.exists?(File.join(@ref_path,'diff', "black.png")).should be_true
         File.exists?(File.join(@ref_path,'candidate', "black.png")).should be_true
@@ -60,11 +65,16 @@ describe 'Gatling' do
 
       it 'will return false, creates new diff and candidate images' do
         red_element = element_for_spec('#differentSize')
-        expected_error = "element did not match #{"black.png"}. " +
-                         "A diff image: #{"black.png"} was created in #{@ref_path}/diff/#{"black.png"} " +
-                         "A new reference #{@ref_path}/candidate/#{"black.png"} can be used to fix the test"
 
-        expect {Gatling.matches?("black.png", red_element)}.to raise_error(RuntimeError, expected_error)
+        expect {Gatling.matches?("black.png", red_element)}.to raise_error do |error|
+          error.should be_a? Gatling::MatchError
+          error.comparison.should be_a? Gatling::Comparison
+
+          expected_error = "element did not match #{"black.png"}. " +
+            "A diff image: #{"black.png"} was created in #{@ref_path}/diff/#{"black.png"} " +
+            "A new reference #{@ref_path}/candidate/#{"black.png"} can be used to fix the test"
+          error.message.should == expected_error
+        end
 
         File.exists?(File.join(@ref_path,'diff', "black.png")).should be_true
         File.exists?(File.join(@ref_path,'candidate', "black.png")).should be_true

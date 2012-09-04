@@ -33,7 +33,13 @@ module Gatling
         matches = comparison.matches?
         if !matches
           comparison.actual_image.save(:candidate)
-          save_image_as_diff(comparison.diff_image)
+          diff_image = comparison.diff_image
+          save_image_as_diff(diff_image)
+          raise Gatling::MatchError.new(
+                  "element did not match #{diff_image.file_name}. " +
+                    "A diff image: #{diff_image.file_name} was created in " +
+                    "#{diff_image.path(:diff)} " +
+                    "A new reference #{diff_image.path(:candidate)} can be used to fix the test", comparison)
         end
         matches
       end
@@ -60,9 +66,6 @@ module Gatling
 
     def save_image_as_diff(image)
       image.save(:diff)
-      raise "element did not match #{image.file_name}. A diff image: #{image.file_name} was created in " +
-      "#{image.path(:diff)} " +
-      "A new reference #{image.path(:candidate)} can be used to fix the test"
     end
 
     def save_image_as_candidate(image)
@@ -88,6 +91,16 @@ module Gatling
       rescue
          raise "Config block has changed. Example: Gatling.config {|c| c.reference_image_path = 'some/path'}. Please see README"  
       end   
+    end
+
+  end
+
+  class MatchError < RuntimeError
+    attr_reader :message, :comparison
+
+    def initialize(message, comparison)
+      @message = message
+      @comparison = comparison
     end
 
   end
